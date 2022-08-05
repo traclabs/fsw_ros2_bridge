@@ -14,15 +14,14 @@ from fsw_ros2_bridge.command_info import CommandInfo
 
 class FSWBridge(Node):
    
-    def __init__(self, plugin=None):
+    def __init__(self):
         super().__init__('fsw_ros2_bridge')
 
-        if plugin:
-            self.get_logger().warn("Using FSW Plugin: " + plugin)
-        else:
-            self.get_logger().warn("No FSW Plugin specified, using test")
-        self.fsw = fsw_ros2_bridge.fsw_wrapper.FSWWrapper(plugin)
-        # self.fsw = fsw_ros2_bridge.fsw_wrapper.FSWWrapper("cfs_groundsystem_bridge_plugin.cfs_groundsystem_bridge_plugin")
+        self.declare_parameter('plugin_name', 'fsw_ros2_bridge.test_plugin')
+        self.plugin_name = self.get_parameter('plugin_name').get_parameter_value().string_value
+
+        self.get_logger().warn("Using FSW Plugin: " + self.plugin_name)
+        self.fsw = fsw_ros2_bridge.fsw_wrapper.FSWWrapper(self, self.plugin_name)
         # self.fsw = fsw_ros2_bridge.fsw_wrapper.FSWWrapper("fsw_ros2_bridge.juicer_bridge")
 
         self.timer_period = 0.5  # seconds
@@ -45,15 +44,15 @@ class FSWBridge(Node):
 
     def createPublisher(self, msgType, topicName) :
         self.get_logger().info("Creating PUB topic with name: " + topicName + " of type: " + msgType)
-
         msg_path = self.fsw.getMsgPackage() + ".msg"
-        #MsgType = getattr(importlib.import_module("cfs_msgs.msg"), msgType)  
-        MsgType = getattr(importlib.import_module(msg_path), msgType)  
+        MsgType = getattr(importlib.import_module(msg_path), msgType)
         return self.create_publisher(MsgType, topicName, 10)
 
     def createSubscriber(self, key, topicName, callbackFunc) :
         self.get_logger().warn("Creating CMD topic with name: " + topicName)
-        # self.subscription = self.create_subscription(ToLabCmd, topicName, callbackFunc, 10)
+        msg_path = self.fsw.getMsgPackage() + ".msg"
+        MsgType = getattr(importlib.import_module(msg_path), "ToLabCmd")
+        self.subscription = self.create_subscription(MsgType, topicName, callbackFunc, 10)
 
     def timerCallback(self):
         if self.telem_info :
@@ -67,13 +66,9 @@ class FSWBridge(Node):
 def main(args=None):
     rclpy.init(args=args)
 
-    # parse args and pass in plugin
     bridge = FSWBridge()
     rclpy.spin(bridge)
 
-    # Destroy the node explicitly
-    # (optional - otherwise it will be done automatically
-    # when the garbage collector destroys the node object)
     bridge.destroy_node()
     rclpy.shutdown()
 

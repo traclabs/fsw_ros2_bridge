@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
             'console_scripts': [
-                    'bridge = fsw_ros2_bridge.fsw_ros2_bridge:main'
+                    'fsw_ros2_bridge = fsw_ros2_bridge.fsw_ros2_bridge:main'
             ],
     },
 )
