@@ -17,12 +17,17 @@ class FSWBridge(Node):
     def __init__(self):
         super().__init__('fsw_ros2_bridge')
 
+        # default plugin param, will be set/loaded from app config file
         self.declare_parameter('plugin_name', 'fsw_ros2_bridge.test_plugin')
         self.plugin_name = self.get_parameter('plugin_name').get_parameter_value().string_value
 
+        self.get_logger().warn("============================================================================")
         self.get_logger().warn("Using FSW Plugin: " + self.plugin_name)
+        self.get_logger().warn("============================================================================")
         self.fsw = fsw_ros2_bridge.fsw_wrapper.FSWWrapper(self, self.plugin_name)
-        # self.fsw = fsw_ros2_bridge.fsw_wrapper.FSWWrapper("fsw_ros2_bridge.juicer_bridge")
+        self.msg_pkg = self.fsw.getMsgPackage()
+
+        self.get_logger().warn("msg package: " + self.msg_pkg)
 
         self.timer_period = 0.5  # seconds
 
@@ -37,21 +42,29 @@ class FSWBridge(Node):
         self.sub_map = {}
         if self.command_info:
             for c in self.command_info:
-                self.sub_map[c.getKey()] = self.createSubscriber(c.getKey(), c.getTopicName(), c.getCallbackFunc())
+                self.sub_map[c.getKey()] = self.createSubscriber(c.getKey(), c.getMsgType(), c.getTopicName(), c.getCallbackFunc())
 
         self.timer = self.create_timer(self.timer_period, self.timerCallback)
 
     def createPublisher(self, msgType, topicName):
         self.get_logger().info("Creating PUB topic with name: " + topicName + " of type: " + msgType)
-        msg_path = self.fsw.getMsgPackage() + ".msg"
-        MsgType = getattr(importlib.import_module(msg_path), msgType)
-        return self.create_publisher(MsgType, topicName, 10)
+        msg_path = self.msg_pkg + ".msg"
+        try :
+            MsgType = getattr(importlib.import_module(msg_path), msgType)
+            return self.create_publisher(MsgType, topicName, 10)
+        except :
+            self.get_logger().warn("Could not import TLM msg: " + msgType)
+            pass
 
-    def createSubscriber(self, key, topicName, callbackFunc):
-        self.get_logger().warn("Creating CMD topic with name: " + topicName)
-        msg_path = self.fsw.getMsgPackage() + ".msg"
-        MsgType = getattr(importlib.import_module(msg_path), "ToLabCmd")
-        self.subscription = self.create_subscription(MsgType, topicName, callbackFunc, 10)
+    def createSubscriber(self, key, msgType, topicName, callbackFunc):
+        self.get_logger().info("Creating CMD topic with name: " + topicName + " of type: " + msgType)
+        msg_path = self.msg_pkg + ".msg"
+        try :
+            MsgType = getattr(importlib.import_module(msg_path), msgType)
+            self.subscription = self.create_subscription(MsgType, topicName, callbackFunc, 10)
+        except :
+            self.get_logger().warn("Could not import CMD msg: " + msgType)
+            pass
 
     def timerCallback(self):
         if self.telem_info:
