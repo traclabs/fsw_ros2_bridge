@@ -1,19 +1,19 @@
 
 class TelemInfo():
 
-    def __init__(self, key, msgType, topicName) :       
+    def __init__(self, key, msg_type, topic_name) :       
         self._key = key
-        self._msgType = msgType
-        self._topicName = topicName
+        self._msg_type = msg_type
+        self._topic_name = topic_name
 
-    def getKey(self) :
+    def get_key(self) :
         return self._key
     
-    def getMsgType(self) :
-        return self._msgType
+    def get_msg_type(self) :
+        return self._msg_type
 
-    def getTopicName(self) :
-        return self._topicName
+    def get_topic_name(self) :
+        return self._topic_name
     
     def print(self) :
-        print("key: " + self._key + ", msg: " + self._msgType + ", topic: " + self._topicName)
+        print("key: " + self._key + ", msg: " + self._msg_type + ", topic: " + self._topic_name)

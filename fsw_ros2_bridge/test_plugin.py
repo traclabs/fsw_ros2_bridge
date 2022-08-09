@@ -1,18 +1,14 @@
-#!/usr/bin/env python3
-
 from fsw_ros2_bridge.fsw_plugin_interface import *
 
-
 class FSWPlugin(FSWPluginInterface):
-
-    def getTelemetryMessageInfo(self):
+    def get_telemetry_message_info(self):
         pass
 
-    def getCommandMessageInfo(self):
+    def get_command_message_info(self):
         pass
 
-    def getLatestData(self, key):
+    def get_latest_data(self, key):
         pass
 
-    def getMsgPackage(self):
+    def get_msg_package(self):
         pass

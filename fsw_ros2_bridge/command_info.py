@@ -1,25 +1,24 @@
 
 class CommandInfo():
 
-    def __init__(self, key, msgType, topicName, callbackFunc) :       
-    # def __init__(self, key, msgType, topicName) :       
+    def __init__(self, key, msg_type, topic_name, callback_func) :       
         self._key = key
-        self._msgType = msgType
-        self._topicName = topicName
-        self._callbackFunc = callbackFunc
+        self._msg_type = msg_type
+        self._topic_name = topic_name
+        self._callback_func = callback_func
 
-    def getKey(self) :
+    def get_key(self) :
         return self._key
     
-    def getMsgType(self) :
-        return self._msgType
+    def get_msg_type(self) :
+        return self._msg_type
 
-    def getTopicName(self) :
-        return self._topicName
+    def get_topic_name(self) :
+        return self._topic_name
     
-    def getCallbackFunc(self) :
-        return self._callbackFunc
+    def get_callback_func(self) :
+        return self._callback_func
 
     def print(self) :
-        print("key: " + self._key + ", msg: " + self._msgType + ", topic: " + self._topicName)
+        print("key: " + self._key + ", msg: " + self._msg_type + ", topic: " + self._topic_name)
 
