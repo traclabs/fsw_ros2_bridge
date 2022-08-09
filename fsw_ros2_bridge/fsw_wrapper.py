@@ -1,6 +1,7 @@
 import importlib
 from fsw_ros2_bridge.fsw_plugin_interface import *
 
+
 class FSWWrapper:
     def __init__(self, node, plugin=None):
         if plugin != None:

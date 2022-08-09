@@ -1,5 +1,6 @@
 from fsw_ros2_bridge.fsw_plugin_interface import *
 
+
 class FSWPlugin(FSWPluginInterface):
     def get_telemetry_message_info(self):
         pass

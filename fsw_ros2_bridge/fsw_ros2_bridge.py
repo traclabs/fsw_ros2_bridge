@@ -49,20 +49,20 @@ class FSWBridge(Node):
     def setup_publisher(self, msg_type, topic_name):
         self.get_logger().info("Creating PUB topic with name: " + topic_name + " of type: " + msg_type)
         msg_path = self.msg_pkg + ".msg"
-        try :
+        try:
             MsgType = getattr(importlib.import_module(msg_path), msg_type)
             return self.create_publisher(MsgType, topic_name, 10)
-        except :
+        except:
             self.get_logger().warn("Could not import TLM msg: " + msg_type)
             pass
 
     def create_subscriber(self, key, msg_type, topic_name, callback_func):
         self.get_logger().info("Creating CMD topic with name: " + topic_name + " of type: " + msg_type)
         msg_path = self.msg_pkg + ".msg"
-        try :
+        try:
             MsgType = getattr(importlib.import_module(msg_path), msg_type)
             self.subscription = self.create_subscription(MsgType, topic_name, callback_func, 10)
-        except :
+        except:
             self.get_logger().warn("Could not import CMD msg: " + msg_type)
             pass
 
