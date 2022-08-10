@@ -6,9 +6,9 @@ from fsw_ros2_bridge.command_info import CommandInfo
 
 class FSWPluginInterface:
     def __init__(self, node):
-        self.telem_info = []
-        self.command_info = []
-        self.node = node
+        self._telem_info = []
+        self._command_info = []
+        self._node = node
 
     @abstractmethod
     def get_telemetry_message_info(self):
