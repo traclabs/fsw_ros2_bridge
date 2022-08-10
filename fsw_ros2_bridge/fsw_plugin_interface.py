@@ -1,7 +1,4 @@
-from abc import ABC, abstractmethod
-
-from fsw_ros2_bridge.telem_info import TelemInfo
-from fsw_ros2_bridge.command_info import CommandInfo
+from abc import abstractmethod
 
 
 class FSWPluginInterface:

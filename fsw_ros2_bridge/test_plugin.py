@@ -1,4 +1,4 @@
-from fsw_ros2_bridge.fsw_plugin_interface import *
+from fsw_ros2_bridge.fsw_plugin_interface import FSWPluginInterface
 
 
 class FSWPlugin(FSWPluginInterface):
