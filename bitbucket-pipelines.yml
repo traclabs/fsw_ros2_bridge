@@ -33,6 +33,7 @@ pipelines:
         name: 'Install ROS2'
         script:
           - apt update
+          - apt -y upgrade
           - export DEBIAN_FRONTEND=noninteractive
 #          - aptitude search ros-galactic
           - apt -y install ros-galactic-ros-base
