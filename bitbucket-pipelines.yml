@@ -33,7 +33,8 @@ pipelines:
         name: 'Install ROS2'
         script:
           - apt update
-          - aptitude search ros-galactic
+          - export DEBIAN_FRONTEND=noninteractive
+#          - aptitude search ros-galactic
           - apt -y install ros-galactic-desktop
           - source /opt/ros/galactic/setup.bash
 #    - parallel: 
