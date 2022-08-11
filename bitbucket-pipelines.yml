@@ -35,7 +35,7 @@ pipelines:
           - apt update
           - export DEBIAN_FRONTEND=noninteractive
 #          - aptitude search ros-galactic
-          - apt -y install ros-galactic-desktop
+          - apt -y install ros-galactic-ros-base
           - source /opt/ros/galactic/setup.bash
 #    - parallel: 
 #      - step:
