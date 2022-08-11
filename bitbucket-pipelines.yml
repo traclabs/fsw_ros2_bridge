@@ -18,8 +18,8 @@ pipelines:
     - step:
         name: 'Setup Sources'
         script:
-          - apt install software-properties-common
-          - add-apt-repository universe
+          # - apt install software-properties-common
+          # - add-apt-repository universe
           - apt update 
           - apt install curl gnupg lsb-release
           - curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
