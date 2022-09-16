@@ -32,13 +32,15 @@ class FSWBridge(Node):
         self._fsw = fsw_ros2_bridge.fsw_wrapper.FSWWrapper(self, self._plugin_name)
         self._msg_pkg = self._fsw.get_msg_package()
 
-        self.get_message_info_srv = self.create_service(GetMessageInfo, '/fsw_ros2_bridge/get_message_info',
-            self.get_message_info_callback)
-        self.set_message_info_srv = self.create_service(SetMessageInfo, '/fsw_ros2_bridge/set_message_info',
-            self.set_message_info_callback)
-
-        self.get_plugin_info_srv = self.create_service(GetPluginInfo, '/fsw_ros2_bridge/get_plugin_info',
-            self.get_plugin_info_callback)
+        self.get_message_info_srv = self.create_service(GetMessageInfo,
+                                                        '/fsw_ros2_bridge/get_message_info',
+                                                        self.get_message_info_callback)
+        self.set_message_info_srv = self.create_service(SetMessageInfo,
+                                                        '/fsw_ros2_bridge/set_message_info',
+                                                        self.set_message_info_callback)
+        self.get_plugin_info_srv = self.create_service(GetPluginInfo,
+                                                       '/fsw_ros2_bridge/get_plugin_info',
+                                                       self.get_plugin_info_callback)
 
         self.get_logger().warn("msg package: " + self._msg_pkg)
 
@@ -107,16 +109,17 @@ class FSWBridge(Node):
                     self.get_logger().debug("[" + key + "] got data. ready to publish")
                     self._pub_map[key].publish(msg)
 
-
     def load_message_info(self):
         self._message_info = []
         for package_name, message_names in get_message_interfaces().items():
             if package_name == self._msg_pkg:
                 for message_name in message_names:
                     m = f'{package_name}/{message_name}'
-                    self.get_logger().info("found msg type: " + m + ", pkg: " + package_name + ", msg: " + message_name)            
+                    self.get_logger().info("found msg type: " + m + ", pkg: "
+                                           + package_name + ", msg: " + message_name)
                     message_name = message_name.replace("msg/", "")
-                    MsgType = getattr(importlib.import_module(self._msg_pkg + ".msg"), message_name)
+                    MsgType = getattr(importlib.import_module(self._msg_pkg + ".msg"),
+                                      message_name)
                     mi = MessageInfo()
                     mi.pkg_name = self._msg_pkg
                     mi.msg_name = message_name
@@ -142,12 +145,14 @@ class FSWBridge(Node):
     def set_message_info_callback(self, request, response):
         self.get_logger().info('SetMessageInfo()')
         for mi in self._message_info:
-            if (mi.msg_name == request.msg_info.msg_name) and (mi.pkg_name == request.msg_info.pkg_name):
+            if (mi.msg_name == request.msg_info.msg_name) and \
+               (mi.pkg_name == request.msg_info.pkg_name):
                 mi.info = request.msg_info.info
                 self._msg_dict[mi.msg_name]["info"] = request.msg_info.info
                 self.get_logger().info('SetMessageInfo() -- msg: ' + mi.msg_name)
                 self.get_logger().info('SetMessageInfo() --  mi info  : ' + mi.info)
-                self.get_logger().info('SetMessageInfo() --  dict info: ' + self._msg_dict[mi.msg_name]["info"])
+                self.get_logger().info('SetMessageInfo() --  dict info: '
+                                       + self._msg_dict[mi.msg_name]["info"])
                 self.save_msg_dict_to_disk()
         return response
 
@@ -167,8 +172,9 @@ class FSWBridge(Node):
             self.get_logger().info("opening message dictionary file....")
             with open(self._dict_file, "r") as infile:
                 self._msg_dict = json.load(infile)
-            self.get_logger().info("found message dictionary of size: " + str(len(self._msg_dict.keys())))
-        except:
+            self.get_logger().info("found message dictionary of size: "
+                                   + str(len(self._msg_dict.keys())))
+        except FileNotFoundError:
             self.get_logger().info("problem reading message dictionary")
 
         if not self._msg_dict:
@@ -180,25 +186,30 @@ class FSWBridge(Node):
             self.copy_message_dictonary_to_info()
 
     def copy_message_dictonary_to_info(self):
-        self.get_logger().info("copy_message_dictonary_to_info() -- msg info size: " + str(len(self._message_info)))
+        self.get_logger().info("copy_message_dictonary_to_info() -- msg info size: "
+                               + str(len(self._message_info)))
         modified = False
-        for mi in self._message_info:        
+        for mi in self._message_info:
             if mi.msg_name in self._msg_dict:
                 mi.info = self._msg_dict[mi.msg_name]["info"]
             else:
-                self._msg_dict[mi.msg_name] = {"pkg": mi.pkg_name, "name": mi.msg_name,
-                                                "type": self.get_message_type(mi.msg_type), "info": mi.info}
+                self._msg_dict[mi.msg_name] = {"pkg": mi.pkg_name,
+                                               "name": mi.msg_name,
+                                               "type": self.get_message_type(mi.msg_type),
+                                               "info": mi.info}
                 modified = modified or True
         if modified:
             self.save_msg_dict_to_disk()
-            
 
     def create_message_dictionary(self):
-        self.get_logger().info("create_message_dictionary() -- msg info size: " + str(len(self._message_info)))
         md = {}
         for mi in self._message_info:
-            mi.info = str("This is info about " + self.get_message_type(mi.msg_type) + " msg: " + mi.msg_name)
-            m = {"pkg": mi.pkg_name, "name": mi.msg_name, "type": self.get_message_type(mi.msg_type), "info": mi.info}
+            mi.info = str("This is info about " + self.get_message_type(mi.msg_type)
+                          + " msg: " + mi.msg_name)
+            m = {"pkg": mi.pkg_name,
+                 "name": mi.msg_name,
+                 "type": self.get_message_type(mi.msg_type),
+                 "info": mi.info}
             md[mi.msg_name] = m
         return md
 
@@ -208,9 +219,13 @@ class FSWBridge(Node):
             json.dump(self._msg_dict, outfile)
 
     def get_message_type(self, msg_type):
-        if msg_type is MessageInfo.TELEMETRY: return "TELEMETRY"
-        if msg_type is MessageInfo.COMMAND: return "COMMAND"
-        else: return "UNKNOWN"
+        if msg_type is MessageInfo.TELEMETRY:
+            return "TELEMETRY"
+        if msg_type is MessageInfo.COMMAND:
+            return "COMMAND"
+        else:
+            return "UNKNOWN"
+
 
 def main(args=None):
     rclpy.init(args=args)
