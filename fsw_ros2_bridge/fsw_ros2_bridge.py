@@ -3,8 +3,10 @@ from rclpy.node import Node
 from rosidl_runtime_py import get_message_interfaces
 from ament_index_python.packages import get_package_share_directory
 
+import os
 import importlib
 import json
+import glob
 
 import fsw_ros2_bridge.fsw_wrapper
 from fsw_ros2_bridge_msgs.srv import GetMessageInfo
@@ -25,6 +27,7 @@ class FSWBridge(Node):
         # default plugin param, will be set/loaded from app config file
         self.declare_parameter('plugin_name', 'fsw_ros2_bridge.test_plugin')
         self._plugin_name = self.get_parameter('plugin_name').get_parameter_value().string_value
+        self._plugin_pkg_name = self._plugin_name.split('.')[0]
 
         self.get_logger().warn("================================================================")
         self.get_logger().warn("Using FSW Plugin: " + self._plugin_name)
@@ -157,9 +160,18 @@ class FSWBridge(Node):
         return response
 
     def get_plugin_info_callback(self, request, response):
+        response.node_name = self.get_name()
         response.msg_pkg = self._msg_pkg
         response.plugin_name = self._plugin_name
+        response.config_files = self.get_config_files()
         return response
+
+    def get_config_files(self):
+        resource_path = get_package_share_directory(self._plugin_pkg_name) + r"/config/*.yaml"
+        config_files = []
+        config_files = glob.glob(resource_path)
+        self.get_logger().info('get_config_files() -- ' + str(config_files))
+        return config_files
 
     def load_message_dictionary(self):
         resource_path = get_package_share_directory(self._msg_pkg)
@@ -215,6 +227,12 @@ class FSWBridge(Node):
 
     def save_msg_dict_to_disk(self):
         self.get_logger().info("saving to file: " + self._dict_file)
+        msg_resource_path = get_package_share_directory(self._msg_pkg) + "/resource"
+        self.get_logger().info("checking if path exists: " + msg_resource_path)
+
+        if not os.path.exists(msg_resource_path):
+            self.get_logger().info("creating path: " + msg_resource_path)
+            os.makedirs(msg_resource_path)
         with open(self._dict_file, "w") as outfile:
             json.dump(self._msg_dict, outfile)
 
