@@ -19,3 +19,6 @@ class CommandInfo():
 
     def get_callback_func(self):
         return self._callback_func
+
+    def set_callback_func(self, func):
+        self._callback_func = func
