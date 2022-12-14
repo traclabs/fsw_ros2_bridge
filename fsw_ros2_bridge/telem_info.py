@@ -2,10 +2,11 @@
 
 class TelemInfo():
 
-    def __init__(self, key, msg_type, topic_name):
+    def __init__(self, key, msg_type, topic_name, port):
         self._key = key
         self._msg_type = msg_type
         self._topic_name = topic_name
+        self._port = port
 
     def get_key(self):
         return self._key
@@ -15,3 +16,6 @@ class TelemInfo():
 
     def get_topic_name(self):
         return self._topic_name
+
+    def get_port(self):
+        return self._port
