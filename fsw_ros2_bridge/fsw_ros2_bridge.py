@@ -55,7 +55,9 @@ class FSWBridge(Node):
         self._pub_map = {}
         if self._telem_info:
             for t in self._telem_info:
-                self._pub_map[t.get_key()] = self.setup_publisher(t.get_msg_type(),
+                self.get_logger().warn("setting up pub with key:: " + t.get_key())
+                self._pub_map[t.get_key()] = self.setup_publisher(t.get_key(),
+                                                                  t.get_msg_type(),
                                                                   t.get_topic_name())
 
         self.sub_map = {}
@@ -83,9 +85,10 @@ class FSWBridge(Node):
                 ct.append(c.get_msg_type())
         return ct
 
-    def setup_publisher(self, msg_type, topic_name):
-        self.get_logger().info("Creating PUB with name: " + topic_name + " of type: " + msg_type)
+    def setup_publisher(self, key, msg_type, topic_name):
+        self.get_logger().info("Creating TLM (" +  key + ") with name: " + topic_name + " of type: " + msg_type)
         msg_path = self._msg_pkg + ".msg"
+        msg_type = msg_type.replace(".msg", "")
         try:
             MsgType = getattr(importlib.import_module(msg_path), msg_type)
             return self.create_publisher(MsgType, topic_name, 10)
@@ -94,13 +97,15 @@ class FSWBridge(Node):
             pass
 
     def create_subscriber(self, key, msg_type, topic_name, callback_func):
-        self.get_logger().info("Creating CMD with name: " + topic_name + " of type: " + msg_type)
         msg_path = self._msg_pkg + ".msg"
+        msg_type = msg_type.replace(".msg", "")
+        self.get_logger().info("Creating CMD (" + key + ") with name: " + topic_name + " of type: " + msg_type)
+        # self.get_logger().info("msg_path: " + msg_path)
         try:
             MsgType = getattr(importlib.import_module(msg_path), msg_type)
             self.subscription = self.create_subscription(MsgType, topic_name, callback_func, 10)
         except (AttributeError):
-            self.get_logger().warn("Could not import CMD msg: " + msg_type)
+            self.get_logger().warn("... could not import CMD msg: " + msg_type)
             pass
 
     def timer_callback(self):
@@ -118,7 +123,7 @@ class FSWBridge(Node):
             if package_name == self._msg_pkg:
                 for message_name in message_names:
                     m = f'{package_name}/{message_name}'
-                    self.get_logger().info("found msg type: " + m + ", pkg: "
+                    self.get_logger().debug("found msg type: " + m + ", pkg: "
                                            + package_name + ", msg: " + message_name)
                     message_name = message_name.replace("msg/", "")
                     MsgType = getattr(importlib.import_module(self._msg_pkg + ".msg"),
