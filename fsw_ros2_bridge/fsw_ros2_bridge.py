@@ -86,7 +86,8 @@ class FSWBridge(Node):
         return ct
 
     def setup_publisher(self, key, msg_type, topic_name):
-        self.get_logger().info("Creating TLM (" +  key + ") with name: " + topic_name + " of type: " + msg_type)
+        self.get_logger().info("Creating TLM (" + key + ") with name: " + topic_name
+                               + " of type: " + msg_type)
         msg_path = self._msg_pkg + ".msg"
         msg_type = msg_type.replace(".msg", "")
         try:
@@ -99,7 +100,8 @@ class FSWBridge(Node):
     def create_subscriber(self, key, msg_type, topic_name, callback_func):
         msg_path = self._msg_pkg + ".msg"
         msg_type = msg_type.replace(".msg", "")
-        self.get_logger().info("Creating CMD (" + key + ") with name: " + topic_name + " of type: " + msg_type)
+        self.get_logger().info("Creating CMD (" + key + ") with name: " + topic_name
+                               + " of type: " + msg_type)
         # self.get_logger().info("msg_path: " + msg_path)
         try:
             MsgType = getattr(importlib.import_module(msg_path), msg_type)
@@ -124,7 +126,7 @@ class FSWBridge(Node):
                 for message_name in message_names:
                     m = f'{package_name}/{message_name}'
                     self.get_logger().debug("found msg type: " + m + ", pkg: "
-                                           + package_name + ", msg: " + message_name)
+                                            + package_name + ", msg: " + message_name)
                     message_name = message_name.replace("msg/", "")
                     MsgType = getattr(importlib.import_module(self._msg_pkg + ".msg"),
                                       message_name)
