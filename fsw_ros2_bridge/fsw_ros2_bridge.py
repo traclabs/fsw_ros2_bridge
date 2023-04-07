@@ -47,7 +47,7 @@ class FSWBridge(Node):
 
         self.get_logger().warn("msg package: " + self._msg_pkg)
 
-        self._timer_period = 0.5  # seconds
+        self._timer_period = 0.1  # seconds
 
         self._telem_info = self._fsw.get_plugin().get_telemetry_message_info()
         self._command_info = self._fsw.get_plugin().get_command_message_info()
@@ -116,7 +116,16 @@ class FSWBridge(Node):
                 key = t.get_key()
                 msg = self._fsw.get_plugin().get_latest_data(key)
                 if msg is not None:
-                    self.get_logger().debug("[" + key + "] got data. ready to publish")
+                    self.get_logger().info("[" + key + "] got data. ready to publish")
+                    try :
+
+                        if key == "CPU1RobotSimHkTlmt":
+                            msg.header.stamp =  self.get_clock().now().to_msg()
+                            msg.header.stamp.sec = msg.header.stamp.sec - 1
+                            # msg.joints.joint3 -= 0.075 
+                    except (AttributeError):
+                        pass
+                    
                     self._pub_map[key].publish(msg)
 
     def load_message_info(self):
