@@ -119,10 +119,8 @@ class FSWBridge(Node):
                     self.get_logger().info("[" + key + "] got data. ready to publish")
                     try :
 
-                        if key == "CPU1RobotSimHkTlmt":
-                            msg.header.stamp =  self.get_clock().now().to_msg()
-                            msg.header.stamp.sec = msg.header.stamp.sec - 1
-                            # msg.joints.joint3 -= 0.075 
+                        # if key == "CPU1RobotSimHkTlmt":
+                        msg.header.stamp =  self.get_clock().now().to_msg()
                     except (AttributeError):
                         pass
                     
