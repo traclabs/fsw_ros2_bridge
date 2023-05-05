@@ -116,10 +116,8 @@ class FSWBridge(Node):
                 key = t.get_key()
                 msg = self._fsw.get_plugin().get_latest_data(key)
                 if msg is not None:
-                    self.get_logger().info("[" + key + "] got data. ready to publish")
+                    # self.get_logger().info("[" + key + "] got data. ready to publish")
                     try :
-
-                        # if key == "CPU1RobotSimHkTlmt":
                         msg.header.stamp =  self.get_clock().now().to_msg()
                     except (AttributeError):
                         pass
