@@ -1,5 +1,6 @@
 from setuptools import setup
 
+
 package_name = 'fsw_ros2_bridge'
 
 setup(
