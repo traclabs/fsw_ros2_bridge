@@ -13,7 +13,7 @@ from fsw_ros2_bridge_msgs.srv import GetMessageInfo
 from fsw_ros2_bridge_msgs.srv import SetMessageInfo
 from fsw_ros2_bridge_msgs.srv import GetPluginInfo
 from fsw_ros2_bridge_msgs.msg import MessageInfo
-
+from cfe_msgs.msg import BinaryPktPayload  # Default binary packet format
 
 class FSWBridge(Node):
 
@@ -86,12 +86,18 @@ class FSWBridge(Node):
         return ct
 
     def setup_publisher(self, key, msg_type, topic_name):
+        if msg_type:
+            msg_type = msg_type.replace(".msg", "")
+
         self.get_logger().info("Creating TLM (" + key + ") with name: " + topic_name
-                               + " of type: " + msg_type)
+                               + " of type: " + str(msg_type))
         msg_path = self._msg_pkg + ".msg"
-        msg_type = msg_type.replace(".msg", "")
+
         try:
-            MsgType = getattr(importlib.import_module(msg_path), msg_type)
+            if msg_type:
+                MsgType = getattr(importlib.import_module(msg_path), msg_type)
+            else: # Default case
+                MsgType = BinaryPktPayload
             return self.create_publisher(MsgType, topic_name, 10)
         except (AttributeError):
             self.get_logger().warn("Could not import TLM msg: " + msg_type)
@@ -99,12 +105,17 @@ class FSWBridge(Node):
 
     def create_subscriber(self, key, msg_type, topic_name, callback_func):
         msg_path = self._msg_pkg + ".msg"
-        msg_type = msg_type.replace(".msg", "")
+        if msg_type:
+            msg_type = msg_type.replace(".msg", "")
+            
         self.get_logger().info("Creating CMD (" + key + ") with name: " + topic_name
-                               + " of type: " + msg_type)
+                               + " of type: " + str(msg_type))
         # self.get_logger().info("msg_path: " + msg_path)
         try:
-            MsgType = getattr(importlib.import_module(msg_path), msg_type)
+            if msg_type:
+                MsgType = getattr(importlib.import_module(msg_path), msg_type)
+            else: # Default Case
+                MsgType = BinaryPktPayload
             self.subscription = self.create_subscription(MsgType, topic_name, callback_func, 10)
         except (AttributeError):
             self.get_logger().warn("... could not import CMD msg: " + msg_type)
