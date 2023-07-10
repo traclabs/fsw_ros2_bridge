@@ -1,3 +1,11 @@
+"""
+.. module:: fsw_ros2_bridge.fsw_ros2_bridge
+   :synopsis: The top level of the bridge
+
+.. moduleauthor:: Stephen Hart
+
+"""
+
 import rclpy
 from rclpy.node import Node
 from rosidl_runtime_py import get_message_interfaces
@@ -16,8 +24,26 @@ from fsw_ros2_bridge_msgs.msg import MessageInfo
 
 
 class FSWBridge(Node):
+    """
+    This class is the top level class.
+
+    Attributes
+    ----------
+    dict_file : str
+        JSON file containing message dictionary definitions
+    message_info : list
+        List of type MessageInfo containing all telemetry and command messages
+    msg_dict : dictionary
+        Dictionary mapping for message_info
+
+    Methods
+    -------
+    """
 
     def __init__(self):
+        '''
+        Initializes attributes and ROS2 node information.
+        '''
         super().__init__('fsw_ros2_bridge')
 
         self._dict_file = ""
@@ -72,6 +98,12 @@ class FSWBridge(Node):
         self.load_message_info()
 
     def get_telemetry_message_types(self):
+        """
+        Gets the message types that are telemetry.
+
+           Returns:
+                   telem_list (list): List of telemetry types
+        """
         tt = []
         if self._telem_info:
             for t in self._telem_info:
@@ -79,6 +111,12 @@ class FSWBridge(Node):
         return tt
 
     def get_command_message_types(self):
+        """
+        Gets all the message types that are commands.
+
+           Returns:
+                   command_list (list): List of command types
+        """
         ct = []
         if self._command_info:
             for c in self._command_info:
@@ -86,6 +124,14 @@ class FSWBridge(Node):
         return ct
 
     def setup_publisher(self, key, msg_type, topic_name):
+        """
+        Set the publisher for the given telemetry type.
+
+            Parameters:
+                    key (str): Unique telemetry identifier
+                    msg_type (str): The message type of the telemetry
+                    topic_name (str): The ROS2 topic name
+        """
         self.get_logger().info("Creating TLM (" + key + ") with name: " + topic_name
                                + " of type: " + msg_type)
         msg_path = self._msg_pkg + ".msg"
@@ -98,6 +144,15 @@ class FSWBridge(Node):
             pass
 
     def create_subscriber(self, key, msg_type, topic_name, callback_func):
+        """
+        Set the subscriber for the given command type.
+
+            Parameters:
+                    key (str): Unique command identifier
+                    msg_type (str): The message type of the command
+                    topic_name (str): The ROS2 topic name
+                    callback_func (func): The function to be called when the command is received
+        """
         msg_path = self._msg_pkg + ".msg"
         msg_type = msg_type.replace(".msg", "")
         self.get_logger().info("Creating CMD (" + key + ") with name: " + topic_name
@@ -111,6 +166,9 @@ class FSWBridge(Node):
             pass
 
     def timer_callback(self):
+        """
+        Callback to check for updated telemetry.
+        """
         if self._telem_info:
             for t in self._telem_info:
                 key = t.get_key()
@@ -125,6 +183,9 @@ class FSWBridge(Node):
                     self._pub_map[key].publish(msg)
 
     def load_message_info(self):
+        """
+        Loads ROS2 message structures on initialization.
+        """
         self._message_info = []
         for package_name, message_names in get_message_interfaces().items():
             if package_name == self._msg_pkg:
@@ -153,11 +214,31 @@ class FSWBridge(Node):
         self.load_message_dictionary()
 
     def get_message_info_callback(self, request, response):
+        """
+        Callback that returns the message info list.
+
+            Parameters:
+                    request (): not used
+                    response (?): used for return value
+
+            Returns:
+                    response (?): Value containing the message info list
+        """
         self.get_logger().info('GetMessageInfo()')
         response.msg_info = self._message_info
         return response
 
     def set_message_info_callback(self, request, response):
+        """
+        Callback that sets the message info list.
+
+            Parameters:
+                    request (?): contains the new message info
+                    response (): not used
+
+            Returns:
+                    response (?): not modified here
+        """
         self.get_logger().info('SetMessageInfo()')
         for mi in self._message_info:
             if (mi.msg_name == request.msg_info.msg_name) and \
@@ -172,6 +253,16 @@ class FSWBridge(Node):
         return response
 
     def get_plugin_info_callback(self, request, response):
+        """
+        Callback that returns plugin information.
+
+            Parameters:
+                    request (): not used
+                    response (?): not used
+
+            Returns:
+                    response (?): Information about the plugin
+        """
         response.node_name = self.get_name()
         response.msg_pkg = self._msg_pkg
         response.plugin_name = self._plugin_name
@@ -179,6 +270,12 @@ class FSWBridge(Node):
         return response
 
     def get_config_files(self):
+        """
+        Get the configuration files.
+
+            Returns:
+                    config_files (list): Returns a list of yaml config files.
+        """
         resource_path = get_package_share_directory(self._plugin_pkg_name) + r"/config/*.yaml"
         config_files = []
         config_files = glob.glob(resource_path)
@@ -186,6 +283,9 @@ class FSWBridge(Node):
         return config_files
 
     def load_message_dictionary(self):
+        """
+        Loads the message dictionary upon initialization.
+        """
         resource_path = get_package_share_directory(self._msg_pkg)
         dict_file = 'message_dictionary.json'
         self._dict_file = resource_path + "/resource/" + dict_file
@@ -210,6 +310,9 @@ class FSWBridge(Node):
             self.copy_message_dictonary_to_info()
 
     def copy_message_dictonary_to_info(self):
+        """
+        Updates the message dictionary based on the current message information list.
+        """
         self.get_logger().info("copy_message_dictonary_to_info() -- msg info size: "
                                + str(len(self._message_info)))
         modified = False
@@ -226,6 +329,12 @@ class FSWBridge(Node):
             self.save_msg_dict_to_disk()
 
     def create_message_dictionary(self):
+        """
+        Creates the message dictionary from the current message information list.
+
+            Returns:
+                    md (dict): the newly created message dictionary
+        """
         md = {}
         for mi in self._message_info:
             mi.info = str("This is info about " + self.get_message_type(mi.msg_type)
@@ -238,6 +347,9 @@ class FSWBridge(Node):
         return md
 
     def save_msg_dict_to_disk(self):
+        """
+        Saves the current message dictionary to a file.
+        """
         self.get_logger().info("saving to file: " + self._dict_file)
         msg_resource_path = get_package_share_directory(self._msg_pkg) + "/resource"
         self.get_logger().info("checking if path exists: " + msg_resource_path)
@@ -249,6 +361,12 @@ class FSWBridge(Node):
             json.dump(self._msg_dict, outfile)
 
     def get_message_type(self, msg_type):
+        """
+        Returns a string specifying the message type.
+
+            Returns:
+                    type (str): The type of the message (telemetry or command)
+        """
         if msg_type is MessageInfo.TELEMETRY:
             return "TELEMETRY"
         if msg_type is MessageInfo.COMMAND:
