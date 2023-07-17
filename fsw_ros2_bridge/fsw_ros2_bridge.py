@@ -114,15 +114,18 @@ class FSWBridge(Node):
         if self._telem_info:
             for t in self._telem_info:
                 key = t.get_key()
-                msg = self._fsw.get_plugin().get_latest_data(key)
-                if msg is not None:
-                    # self.get_logger().info("[" + key + "] got data. ready to publish")
-                    try:
-                        msg.header.stamp = self.get_clock().now().to_msg()
-                    except (AttributeError):
-                        pass
+                msgs = self._fsw.get_plugin().get_buffered_data(key, True)
+                if msgs is None:
+                    continue
+                for msg in msgs:
+                    if msg is not None:
+                        # self.get_logger().info("[" + key + "] got data. ready to publish")
+                        try:
+                            msg.header.stamp = self.get_clock().now().to_msg()
+                        except (AttributeError):
+                            pass
 
-                    self._pub_map[key].publish(msg)
+                        self._pub_map[key].publish(msg)
 
     def load_message_info(self):
         self._message_info = []
