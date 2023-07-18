@@ -118,14 +118,13 @@ class FSWBridge(Node):
                 if msgs is None:
                     continue
                 for msg in msgs:
-                    if msg is not None:
-                        # self.get_logger().info("[" + key + "] got data. ready to publish")
-                        try:
-                            msg.header.stamp = self.get_clock().now().to_msg()
-                        except (AttributeError):
-                            pass
+                    # self.get_logger().info("[" + key + "] got data. ready to publish")
+                    try:
+                        msg.header.stamp = self.get_clock().now().to_msg()
+                    except (AttributeError):
+                        pass
 
-                        self._pub_map[key].publish(msg)
+                    self._pub_map[key].publish(msg)
 
     def load_message_info(self):
         self._message_info = []
