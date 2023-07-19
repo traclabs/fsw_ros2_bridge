@@ -125,8 +125,10 @@ class FSWBridge(Node):
         if self._telem_info:
             for t in self._telem_info:
                 key = t.get_key()
-                msg = self._fsw.get_plugin().get_latest_data(key)
-                if msg is not None:
+                msgs = self._fsw.get_plugin().get_buffered_data(key, True)
+                if msgs is None:
+                    continue
+                for msg in msgs:
                     # self.get_logger().info("[" + key + "] got data. ready to publish")
                     try:
                         msg.header.stamp = self.get_clock().now().to_msg()
