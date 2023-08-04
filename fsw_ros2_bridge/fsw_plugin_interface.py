@@ -27,8 +27,8 @@ class FSWPluginInterface:
         Returns a list of telemetry message types.
     get_command_message_info():
         Returns a list of command message types.
-    get_latest_data(key):
-        Returns the value of the requested telemetry object.
+    get_buffered_data(key, clear=True):
+        Returns the value(s) of the requested telemetry object.
     create_ros_msgs(msg_dir):
         Returns a list of ROS2 messages.
     get_msg_package():
@@ -67,12 +67,13 @@ class FSWPluginInterface:
         pass
 
     @abstractmethod
-    def get_latest_data(self, key):
+    def get_buffered_data(self, key, clear=True):
         '''
-        Returns the value of the requested telemetry object.
+        Returns the value(s) of the requested telemetry object.
 
             Parameters:
                     key (str): The key that identifies the telemetry requested
+                    clear (bool): Flag indicating if data should be cleared once returned
 
             Returns:
                     value (dict): Dictionary containing the current telemetry value
