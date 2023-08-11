@@ -6,6 +6,7 @@
 
 """
 
+
 class bcolors:
     """
     This class defines colors.

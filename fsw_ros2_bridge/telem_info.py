@@ -38,11 +38,11 @@ class TelemInfo():
         '''
         Initialize the attributes for the TelemInfo object.
 
-            Parameters:
-                    key (str): A unique identifier for the telemetry
-                    msg_type (str): The data type passed with the telemetry
-                    topic_name (str): The ROS2 topic name for the telemetry
-                    port (int): The port number to receive the telemetry from
+        Args:
+            key (str): A unique identifier for the telemetry
+            msg_type (str): The data type passed with the telemetry
+            topic_name (str): The ROS2 topic name for the telemetry
+            port (int): The port number to receive the telemetry from
         '''
         self._key = key
         self._msg_type = msg_type
@@ -53,8 +53,8 @@ class TelemInfo():
         """
         Gets the unique identifier for this command.
 
-            Returns:
-                    key (str): the unique identifier for this command
+        Returns:
+            key (str): the unique identifier for this command
         """
         return self._key
 
@@ -62,8 +62,8 @@ class TelemInfo():
         """
         Gets the message type for this command.
 
-            Returns:
-                    msg_type (str): the message type for this command
+        Returns:
+            msg_type (str): the message type for this command
         """
         return self._msg_type
 
@@ -71,8 +71,8 @@ class TelemInfo():
         """
         Gets the ROS2 topic name for this command.
 
-            Returns:
-                    topic_name (str): the topic name for this command
+        Returns:
+            topic_name (str): the topic name for this command
         """
         return self._topic_name
 
@@ -80,7 +80,7 @@ class TelemInfo():
         """
         Gets the port for this command.
 
-            Returns:
-                    port (int): the port for this command
+        Returns:
+            port (int): the port for this command
         """
         return self._port

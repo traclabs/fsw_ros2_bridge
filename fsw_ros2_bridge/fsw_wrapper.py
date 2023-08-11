@@ -29,8 +29,9 @@ class FSWWrapper:
         """
         Initialize the wrapper with the given plugin.
 
-            Parameters:
-                    plugin (FSWPluginInterface): The plugin to run
+        Args:
+            node (rosnode): The ROS2 node
+            plugin (FSWPluginInterface): The plugin to run
         """
         if plugin is not None:
             self._plugin = importlib.import_module(plugin, ".").FSWPlugin(node)
@@ -42,8 +43,8 @@ class FSWWrapper:
         """
         Get the running plugin.
 
-            Returns:
-                    plugin (FSWPluginInterface): The running plugin
+        Returns:
+            plugin (FSWPluginInterface): The running plugin
         """
         return self._plugin
 
@@ -51,7 +52,7 @@ class FSWWrapper:
         """
         Get the ROS2 message package for the running plugin.
 
-            Returns:
-                    msg_pkg (str): The ROS2 message package for the running plugin
+        Returns:
+            msg_pkg (str): The ROS2 message package for the running plugin
         """
         return self._plugin.get_msg_package()

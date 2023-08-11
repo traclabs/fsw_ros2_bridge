@@ -44,12 +44,12 @@ class CommandInfo():
         """
         Initialize the attributes for the CommandInfo object.
 
-            Parameters:
-                    key (str): A unique identifier for the command
-                    msg_type (str): The data type passed with the command
-                    topic_name (str): The ROS2 topic name to receive the command from
-                    callback_func (function): The function to be called when a command is received
-                    port (int): The port number to send the command over
+        Args:
+            key (str): A unique identifier for the command
+            msg_type (str): The data type passed with the command
+            topic_name (str): The ROS2 topic name to receive the command from
+            callback_func (function): The function to be called when a command is received
+            port (int): The port number to send the command over
         """
         self._key = key
         self._msg_type = msg_type
@@ -61,8 +61,8 @@ class CommandInfo():
         """
         Gets the unique identifier for this command.
 
-            Returns:
-                    key (str): the unique identifier for this command
+        Returns:
+            key (str): the unique identifier for this command
         """
         return self._key
 
@@ -70,8 +70,8 @@ class CommandInfo():
         """
         Gets the message type for this command.
 
-            Returns:
-                    msg_type (str): the message type for this command
+        Returns:
+            msg_type (str): the message type for this command
         """
         return self._msg_type
 
@@ -79,8 +79,8 @@ class CommandInfo():
         """
         Gets the ROS2 topic name for this command.
 
-            Returns:
-                    topic_name (str): the topic name for this command
+        Returns:
+            topic_name (str): the topic name for this command
         """
         return self._topic_name
 
@@ -88,8 +88,8 @@ class CommandInfo():
         """
         Gets the callback function for this command.
 
-            Returns:
-                    callback_func (function): the callback function for this command
+        Returns:
+            callback_func (function): the callback function for this command
         """
         return self._callback_func
 
@@ -97,8 +97,8 @@ class CommandInfo():
         """
         Sets the callback function for this command.
 
-            Parameters:
-                    func (function): the function to be called when a command is received
+        Args:
+            func (function): the function to be called when a command is received
         """
         self._callback_func = func
 
@@ -106,7 +106,7 @@ class CommandInfo():
         """
         Gets the port for this command.
 
-            Returns:
-                    port (int): the port for this command
+        Returns:
+            port (int): the port for this command
         """
         return self._port
