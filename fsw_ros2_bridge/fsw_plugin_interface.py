@@ -39,8 +39,8 @@ class FSWPluginInterface:
         '''
         Initializes the attributes for the plugin object.
 
-            Parameters:
-                    node (rosnode): The ROS2 node
+        Args:
+            node (rosnode): The ROS2 node
         '''
         self._telem_info = []
         self._command_info = []
@@ -51,8 +51,8 @@ class FSWPluginInterface:
         '''
         Returns a list of telemetry message types.
 
-            Returns:
-                    telem_info (list): List of TelemInfo objects
+        Returns:
+            telem_info (list): List of TelemInfo objects
         '''
         pass
 
@@ -61,8 +61,8 @@ class FSWPluginInterface:
         '''
         Returns a list of command message types.
 
-            Returns:
-                    command_info (list): List of CommandInfo objects
+        Returns:
+            command_info (list): List of CommandInfo objects
         '''
         pass
 
@@ -71,12 +71,12 @@ class FSWPluginInterface:
         '''
         Returns the value(s) of the requested telemetry object.
 
-            Parameters:
-                    key (str): The key that identifies the telemetry requested
-                    clear (bool): Flag indicating if data should be cleared once returned
+        Args:
+            key (str): The key that identifies the telemetry requested
+            clear (bool): Flag indicating if data should be cleared once returned
 
-            Returns:
-                    value (dict): Dictionary containing the current telemetry value
+        Returns:
+            value (dict): Dictionary containing the current telemetry value
         '''
         pass
 
@@ -85,11 +85,11 @@ class FSWPluginInterface:
         '''
         Returns a list of ROS2 messages
 
-            Parameters:
-                    msg_dir (str): The directory containing the ROS2 messages
+        Args:
+            msg_dir (str): The directory containing the ROS2 messages
 
-            Returns:
-                    msg_list (list): List of ROS2 message objects
+        Returns:
+            msg_list (list): List of ROS2 message objects
         '''
         pass
 
@@ -98,7 +98,7 @@ class FSWPluginInterface:
         '''
         Returns the ROS2 package containing the messages
 
-            Returns:
-                    msg_pkg (str): The name of the ROS2 package
+        Returns:
+            msg_pkg (str): The name of the ROS2 package
         '''
         pass

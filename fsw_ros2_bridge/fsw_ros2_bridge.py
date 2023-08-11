@@ -101,8 +101,8 @@ class FSWBridge(Node):
         """
         Gets the message types that are telemetry.
 
-           Returns:
-                   telem_list (list): List of telemetry types
+        Returns:
+            telem_list (list): List of telemetry types
         """
         tt = []
         if self._telem_info:
@@ -114,8 +114,8 @@ class FSWBridge(Node):
         """
         Gets all the message types that are commands.
 
-           Returns:
-                   command_list (list): List of command types
+        Returns:
+            command_list (list): List of command types
         """
         ct = []
         if self._command_info:
@@ -127,10 +127,13 @@ class FSWBridge(Node):
         """
         Set the publisher for the given telemetry type.
 
-            Parameters:
-                    key (str): Unique telemetry identifier
-                    msg_type (str): The message type of the telemetry
-                    topic_name (str): The ROS2 topic name
+        Args:
+            key (str): Unique telemetry identifier
+            msg_type (str): The message type of the telemetry
+            topic_name (str): The ROS2 topic name
+
+        Returns:
+            publisher: the created publisher
         """
         self.get_logger().info("Creating TLM (" + key + ") with name: " + topic_name
                                + " of type: " + msg_type)
@@ -147,11 +150,11 @@ class FSWBridge(Node):
         """
         Set the subscriber for the given command type.
 
-            Parameters:
-                    key (str): Unique command identifier
-                    msg_type (str): The message type of the command
-                    topic_name (str): The ROS2 topic name
-                    callback_func (func): The function to be called when the command is received
+        Args:
+            key (str): Unique command identifier
+            msg_type (str): The message type of the command
+            topic_name (str): The ROS2 topic name
+            callback_func (func): The function to be called when the command is received
         """
         msg_path = self._msg_pkg + ".msg"
         msg_type = msg_type.replace(".msg", "")
@@ -219,12 +222,12 @@ class FSWBridge(Node):
         """
         Callback that returns the message info list.
 
-            Parameters:
-                    request (): not used
-                    response (?): used for return value
+        Args:
+            request: not used
+            response: used for return value
 
-            Returns:
-                    response (?): Value containing the message info list
+        Returns:
+            response: Value containing the message info list
         """
         self.get_logger().info('GetMessageInfo()')
         response.msg_info = self._message_info
@@ -234,12 +237,12 @@ class FSWBridge(Node):
         """
         Callback that sets the message info list.
 
-            Parameters:
-                    request (?): contains the new message info
-                    response (): not used
+        Args:
+            request: contains the new message info
+            response: not used
 
-            Returns:
-                    response (?): not modified here
+        Returns:
+            response: not modified here
         """
         self.get_logger().info('SetMessageInfo()')
         for mi in self._message_info:
@@ -258,12 +261,12 @@ class FSWBridge(Node):
         """
         Callback that returns plugin information.
 
-            Parameters:
-                    request (): not used
-                    response (?): not used
+        Args:
+            request: not used
+            response: not used
 
-            Returns:
-                    response (?): Information about the plugin
+        Returns:
+            response: Information about the plugin
         """
         response.node_name = self.get_name()
         response.msg_pkg = self._msg_pkg
@@ -275,8 +278,8 @@ class FSWBridge(Node):
         """
         Get the configuration files.
 
-            Returns:
-                    config_files (list): Returns a list of yaml config files.
+        Returns:
+            config_files (list): Returns a list of yaml config files.
         """
         resource_path = get_package_share_directory(self._plugin_pkg_name) + r"/config/*.yaml"
         config_files = []
@@ -334,8 +337,8 @@ class FSWBridge(Node):
         """
         Creates the message dictionary from the current message information list.
 
-            Returns:
-                    md (dict): the newly created message dictionary
+        Returns:
+            md (dict): the newly created message dictionary
         """
         md = {}
         for mi in self._message_info:
@@ -366,8 +369,11 @@ class FSWBridge(Node):
         """
         Returns a string specifying the message type.
 
-            Returns:
-                    type (str): The type of the message (telemetry or command)
+        Args:
+            msg_type: The message type to convert to a string
+
+        Returns:
+            type (str): The type of the message (telemetry or command)
         """
         if msg_type is MessageInfo.TELEMETRY:
             return "TELEMETRY"
