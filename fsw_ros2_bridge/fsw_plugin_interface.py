@@ -16,7 +16,7 @@ class FSWPluginInterface:
         pass
 
     @abstractmethod
-    def get_buffered_data(self, key, clear):
+    def get_buffered_data(self, key, clear=True):
         pass
 
     @abstractmethod
