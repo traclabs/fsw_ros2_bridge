@@ -120,7 +120,9 @@ class FSWBridge(Node):
             MsgType = getattr(importlib.import_module(msg_path), msg_type)
             if not topic_name.startswith("/"):
                 topic_name = "/" + topic_name
-            self.subscription = self.create_subscription(MsgType, self._namespace + topic_name, callback_func, 10)
+            self.subscription = self.create_subscription(MsgType,
+                                                         self._namespace + topic_name,
+                                                         callback_func, 10)
         except (AttributeError):
             self.get_logger().warn("... could not import CMD msg: " + msg_type)
             pass
