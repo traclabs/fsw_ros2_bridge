@@ -23,11 +23,22 @@ class FSWBridge(Node):
         self._dict_file = ""
         self._message_info = []
         self._msg_dict = {}
+        self._namespace = ""
 
         # default plugin param, will be set/loaded from app config file
         self.declare_parameter('plugin_name', 'fsw_ros2_bridge.test_plugin')
         self._plugin_name = self.get_parameter('plugin_name').get_parameter_value().string_value
         self._plugin_pkg_name = self._plugin_name.split('.')[0]
+
+        # check to see if a namespace was defined for the topics
+        self.declare_parameter('namespace', '')
+        self._namespace = self.get_parameter('namespace'). \
+            get_parameter_value().string_value
+
+        # sanity check
+        if self._namespace and not self._namespace.startswith("/"):
+            self._namespace = "/" + self._namespace
+        self.get_logger().info('namespace: ' + str(self._namespace))
 
         self.get_logger().warn("================================================================")
         self.get_logger().warn("Using FSW Plugin: " + self._plugin_name)
@@ -98,7 +109,9 @@ class FSWBridge(Node):
                 MsgType = getattr(importlib.import_module(msg_path), msg_type)
             else: # Default case
                 MsgType = BinaryPktPayload
-            return self.create_publisher(MsgType, topic_name, 10)
+            if not topic_name.startswith("/"):
+                topic_name = "/" + topic_name
+            return self.create_publisher(MsgType, self._namespace + topic_name, 10)
         except (AttributeError):
             self.get_logger().warn("Could not import TLM msg: " + msg_type)
             pass
@@ -116,7 +129,11 @@ class FSWBridge(Node):
                 MsgType = getattr(importlib.import_module(msg_path), msg_type)
             else: # Default Case
                 MsgType = BinaryPktPayload
-            self.subscription = self.create_subscription(MsgType, topic_name, callback_func, 10)
+            if not topic_name.startswith("/"):
+                topic_name = "/" + topic_name
+            self.subscription = self.create_subscription(MsgType,
+                                                         self._namespace + topic_name,
+                                                         callback_func, 10)
         except (AttributeError):
             self.get_logger().warn("... could not import CMD msg: " + msg_type)
             pass
