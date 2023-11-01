@@ -100,6 +100,9 @@ class FSWBridge(Node):
         if msg_type:
             msg_type = msg_type.replace(".msg", "")
 
+        if not topic_name.startswith("/"):
+            topic_name = self._namespace + "/" + topic_name
+
         self.get_logger().info("Creating TLM (" + key + ") with name: " + topic_name
                                + " of type: " + str(msg_type))
         msg_path = self._msg_pkg + ".msg"
@@ -109,9 +112,7 @@ class FSWBridge(Node):
                 MsgType = getattr(importlib.import_module(msg_path), msg_type)
             else: # Default case
                 MsgType = BinaryPktPayload
-            if not topic_name.startswith("/"):
-                topic_name = "/" + topic_name
-            return self.create_publisher(MsgType, self._namespace + topic_name, 10)
+            return self.create_publisher(MsgType, topic_name, 10)
         except (AttributeError):
             self.get_logger().warn("Could not import TLM msg: " + msg_type)
             pass
@@ -120,7 +121,10 @@ class FSWBridge(Node):
         msg_path = self._msg_pkg + ".msg"
         if msg_type:
             msg_type = msg_type.replace(".msg", "")
-            
+
+        if not topic_name.startswith("/"):
+            topic_name = self._namespace + "/" + topic_name
+
         self.get_logger().info("Creating CMD (" + key + ") with name: " + topic_name
                                + " of type: " + str(msg_type))
         # self.get_logger().info("msg_path: " + msg_path)
@@ -129,10 +133,8 @@ class FSWBridge(Node):
                 MsgType = getattr(importlib.import_module(msg_path), msg_type)
             else: # Default Case
                 MsgType = BinaryPktPayload
-            if not topic_name.startswith("/"):
-                topic_name = "/" + topic_name
             self.subscription = self.create_subscription(MsgType,
-                                                         self._namespace + topic_name,
+                                                         topic_name,
                                                          callback_func, 10)
         except (AttributeError):
             self.get_logger().warn("... could not import CMD msg: " + msg_type)
@@ -146,7 +148,7 @@ class FSWBridge(Node):
                 if msgs is None:
                     continue
                 for msg in msgs:
-                    # self.get_logger().info("[" + key + "] got data. ready to publish")
+                    self.get_logger().debug("[" + key + "] got data. ready to publish")
                     try:
                         msg.header.stamp = self.get_clock().now().to_msg()
                     except (AttributeError):
