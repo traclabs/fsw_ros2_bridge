@@ -1,6 +1,16 @@
+"""
+.. module:: fsw_ros2_bridge.bcolors
+   :synopsis: Defines colors
+
+.. moduleauthor:: Stephen Hart
+
+"""
 
 
 class bcolors:
+    """
+    This class defines colors.
+    """
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
     OKCYAN = '\033[96m'
